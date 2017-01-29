@@ -1,0 +1,17 @@
+notes.txt
+
+Things to do:
+	
+	1. Rerun logistic regressions.  
+		Changes:
+			Change != Low to == High; 
+			exclude medium and just use low and high
+		a. recalculate change in risk.
+		b. normal compas score and violent compas score
+		c. Calculate table for changes in risk based on changes in model
+		d. look for flipped risk, indicating likelihood of being medium but not high risk
+		e. Look into multinomial logistic regression to do low, medium, and high
+
+	2. 
+
+
