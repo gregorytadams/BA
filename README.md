@@ -1,6 +1,6 @@
-## Bachelors Thesis
-# A Study of Bias in the Implementation of Recidivism Risk Algorithms
-# If you have any questions, please feel free to reach out to me at gregorytadams@gmail.com.
+# Bachelors Thesis
+## A Study of Bias in the Implementation of Recidivism Risk Algorithms
+### If you have any questions, please feel free to reach out to me at gregorytadams@gmail.com.
 
 README.md -- This file.
 
