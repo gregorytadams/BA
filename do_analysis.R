@@ -5,6 +5,7 @@ source('~/BA/analysis_functions.R')
 do_analysis_normal <- function(){
 	raw_data <- get_data(FILEPATH_NORMAL)
 	df <- filter_data(raw_data)
+	View(df)
 	plot_decile_scores_normal(df)
 	return(get_logistic_regression_normal_compas(df))
 }

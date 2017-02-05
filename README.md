@@ -4,7 +4,7 @@
 
 README.md -- This file.
 
-setup.sh --  A bash file that clones the necessary repositories, creating the filestructure assumed by the default filepaths in the analysis functions.
+setup.sh --  A bash file that clones the necessary repositories (including this one), creating the filestructure assumed by the default filepaths in the analysis functions.  
 
 setup.R -- A file that installs the necessary libraries for the analysis.  To avoid an overflow of errors saying you already have the libraries installed, I recommend you open the file and comment out any libraries you already have.  With the default libraries on the UChicago computers, you only need to install dplyr (i.e. run "install.packages("dplyr")" sans outside quotes).
 
