@@ -1,5 +1,5 @@
-# This file walks through and comments on the ProPublica analysis. 
-# I have heavily modified much of the code.
+# Much of this file comes from ProPublica's analysis.
+# I have heavily modified much of that code and written much myself.
 
 library(grid)
 library(gridExtra)
@@ -19,7 +19,7 @@ FILEPATH_VIOLENT <- "~/BA/compas-analysis/compas-scores-two-years-violent.csv"
     
     filter_data <- function(raw_data) { 
         df <- dplyr::select(raw_data, age, c_charge_degree, race, age_cat, score_text, sex, priors_count, 
-                                            days_b_screening_arrest, decile_score, is_recid, two_year_recid, c_jail_in, c_jail_out) %>% 
+                            days_b_screening_arrest, decile_score, is_recid, two_year_recid, c_jail_in, c_jail_out) %>% 
             filter(days_b_screening_arrest <= 30) %>%
             filter(days_b_screening_arrest >= -30) %>%
             filter(is_recid != -1) %>%
@@ -64,13 +64,16 @@ FILEPATH_VIOLENT <- "~/BA/compas-analysis/compas-scores-two-years-violent.csv"
 # Start Exploratory Analysis
     
     plot_decile_scores_normal <- function(df) {
-        pblack <- ggplot(data=filter(df, race =="African-American"), aes(ordered(decile_score))) + 
+        pblack <- ggplot(data=filter(df, race =="Hispanic"), aes(ordered(decile_score))) + 
                   geom_bar() + xlab("Decile Score") +
-                  ylim(0, 650) + ggtitle("Black Defendant's Decile Scores")
-        pwhite <- ggplot(data=filter(df, race =="Caucasian"), aes(ordered(decile_score))) + 
+                  ylim(0, 325) + ggtitle("Hispanic Defendant's Decile Scores")
+        pwhite <- ggplot(data=filter(df, race == "Asian"), aes(ordered(decile_score))) + 
                   geom_bar() + xlab("Decile Score") +
-                  ylim(0, 650) + ggtitle("White Defendant's Decile Scores")
-        grid.arrange(pblack, pwhite,  ncol = 2)
+                  ylim(0, 325) + ggtitle("Asian Defendant's Decile Scores")
+        pother <- ggplot(data=filter(df, race == "Other" | race == "Native American"), aes(ordered(decile_score))) + 
+                  geom_bar() + xlab("Decile Score") +
+                  ylim(0, 325) + ggtitle("Other Defendant's Decile Scores")
+        grid.arrange(pblack, pwhite, pother, ncol = 3)
     }
 
     plot_decile_scores_violent <- function(df){
@@ -79,8 +82,11 @@ FILEPATH_VIOLENT <- "~/BA/compas-analysis/compas-scores-two-years-violent.csv"
                   ylim(0, 700) + ggtitle("Black Defendant's Violent Decile Scores")
         pwhite <- ggplot(data=filter(df, race =="Caucasian"), aes(ordered(v_decile_score))) + 
                   geom_bar() + xlab("Violent Decile Score") +
-                  ylim(0, 700) + ggtitle("White Defendant's Violet Decile Scores")
-        grid.arrange(pblack, pwhite,  ncol = 2)
+                  ylim(0, 700) + ggtitle("White Defendant's Decile Scores")
+        pother <- ggplot(data=filter(df, race != "Caucasian" & race != "African-American"), aes(ordered(v_decile_score))) + 
+                  geom_bar() + xlab("Violent Decile Score") +
+                  ylim(0, 700) + ggtitle("Other Defendant's Decile Scores")
+        grid.arrange(pblack, pwhite, pother,  ncol = 3)
     }
 
     get_logistic_regression_normal_compas <- function(df){
@@ -119,6 +125,41 @@ FILEPATH_VIOLENT <- "~/BA/compas-analysis/compas-scores-two-years-violent.csv"
         print(summary(model))
         return(model)
     }
+    
+  bootstrap_t_test <- function(df, num_samples, size_sample, races){
+    means1 <- c()
+    means2 <- c()
+    for (i in 1:num_samples){
+        m <- sample(df$decile_score[df$race == races[1]], size=size_sample, replace=TRUE)
+        m <- mean(m)
+        means1 <- c(means1, m)
+    }
+    for (i in 1:num_samples){
+      m <- mean(sample(df$decile_score[df$race == races[2]], size=size_sample, replace=TRUE))
+      means2 <- c(means2, m)
+    }
+    t = t.test(means1, means2)
+    return(t)
+  }
 
-
+  bootstrap_for_all_races <- function(df, num_samples, size_sample){
+    values <- list()
+    counter <- 0
+    for (i in 1:length(unique(df$race))){
+      print("here")
+      for (j in 1:length(unique(df$race))){
+        r1 <- as.vector(unique(df$race))[i]
+        r2 <- as.vector(unique(df$race))[j]
+         test <- bootstrap_t_test(df, num_samples, size_sample, c(r1, r2))
+         if (test$p.value < 0.05){
+           counter <- counter + 1 
+           values[[counter]] = c(r1, r2, test$p.value, test$conf.int, test$x, test$y)
+         }
+      }
+    }
+    return(values)
+  }
+  
+  
+  
 

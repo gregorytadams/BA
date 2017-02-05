@@ -16,3 +16,5 @@ do_analysis_violent <- function(){
 	plot_decile_scores_violent(df_v)
 	return(get_logistic_regression_violent(df_v))
 }
+
+do_analysis_violent()
