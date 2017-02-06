@@ -119,38 +119,32 @@ FILEPATH_VIOLENT <- "~/BA/compas-analysis/compas-scores-two-years-violent.csv"
               within(race_factor <- relevel(race_factor, ref = 3)) %>%
               mutate(gender_factor = factor(sex, labels= c("Female","Male"))) %>%
               within(gender_factor <- relevel(gender_factor, ref = 2)) %>%
-              mutate(score_factor = factor(v_score_text != "Low", labels = c("LowScore","HighScore")))
+              mutate(score_factor = factor(v_score_text == "High", labels = c("LowScore","HighScore")))
         model <- glm(score_factor ~ gender_factor + age_factor + race_factor +
                                     priors_count + crime_factor + two_year_recid, family="binomial", data=df)
         print(summary(model))
         return(model)
     }
-    
-  bootstrap_t_test <- function(df, num_samples, size_sample, races){
-    means1 <- c()
-    means2 <- c()
-    for (i in 1:num_samples){
-        m <- sample(df$decile_score[df$race == races[1]], size=size_sample, replace=TRUE)
-        m <- mean(m)
-        means1 <- c(means1, m)
-    }
-    for (i in 1:num_samples){
-      m <- mean(sample(df$decile_score[df$race == races[2]], size=size_sample, replace=TRUE))
-      means2 <- c(means2, m)
-    }
-    t = t.test(means1, means2)
-    return(t)
-  }
 
+
+  bootstrap <- function(df, num_samples, size_sample, race){
+    means <- c()
+    for (i in 1:num_samples){
+      m <- sample(df$decile_score[df$race == race], size=size_sample, replace=TRUE)
+      m <- mean(m)
+      means <- c(means, m)
+    }
+    return(means)
+  }
+  
   bootstrap_for_all_races <- function(df, num_samples, size_sample){
     values <- list()
     counter <- 0
     for (i in 1:length(unique(df$race))){
-      print("here")
       for (j in 1:length(unique(df$race))){
         r1 <- as.vector(unique(df$race))[i]
         r2 <- as.vector(unique(df$race))[j]
-         test <- bootstrap_t_test(df, num_samples, size_sample, c(r1, r2))
+         test <- t.test(bootstrap(df, num_samples, size_sample, r1), bootstrap(df, num_samples, size_sample, r2))
          if (test$p.value < 0.05){
            counter <- counter + 1 
            values[[counter]] = c(r1, r2, test$p.value, test$conf.int, test$x, test$y)
@@ -161,5 +155,5 @@ FILEPATH_VIOLENT <- "~/BA/compas-analysis/compas-scores-two-years-violent.csv"
   }
   
   
-  
+  #bootstrap_t_test(df, num_samples, size_sample, c(r1, r2))
 
