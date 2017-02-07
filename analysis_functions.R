@@ -154,6 +154,48 @@ FILEPATH_VIOLENT <- "~/BA/compas-analysis/compas-scores-two-years-violent.csv"
     return(values)
   }
   
+get_pred <- function(df){
   
+}
+  
+get_actual <-function(vec){
+  actual <- c()
+  for (val in vec){
+    if (val == "High") {
+      actual = c(actual, 1)
+    } else {
+      actual = c(actual, 0)
+    }
+  }
+  return(actual)
+}
+
+# Uses ROCR
+
+y <- get_actual(df$score_text)
+predictions <- # model$fitted_values
+
+  get_predictions <- function(Model, cutoff) {
+    for (val in Model$fitted.values) {
+         if (val > cutoff) {a = c(a, 1)}
+         else {a = c(a, 0) }
+    }
+    return(a)
+}
+pred <- prediction(predictions, y);
+
+# Recall-Precision curve             
+RP.perf <- performance(pred, "prec", "rec");
+
+plot (RP.perf);
+
+# ROC curve
+ROC.perf <- performance(pred, "tpr", "fpr");
+plot (ROC.perf);
+
+# ROC area under the curve
+auc.tmp <- performance(pred,"auc");
+auc <- as.numeric(auc.tmp@y.values)
+
   #bootstrap_t_test(df, num_samples, size_sample, c(r1, r2))
 

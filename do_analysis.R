@@ -16,7 +16,8 @@ do_analysis_violent <- function(){
 	return(get_logistic_regression_violent(df_v))
 }
 
-print("normal \n")
-do_analysis_normal()
-print("violent \n")
-do_analysis_violent()
+
+#print("normal \n")
+#do_analysis_normal()
+#print("violent \n")
+#do_analysis_violent()
