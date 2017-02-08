@@ -76,6 +76,16 @@ FILEPATH_VIOLENT <- "~/BA/compas-analysis/compas-scores-two-years-violent.csv"
         grid.arrange(pblack, pwhite, pother, ncol = 3)
     }
 
+    plot_decile_scores_normal <- function(df) {
+      pman <- ggplot(data=filter(df, sex =="Male"), aes(ordered(decile_score))) + 
+        geom_bar() + xlab("Decile Score") +
+        ylim(0, 325) + ggtitle("Male's Decile Scores")
+      pwom <- ggplot(data=filter(df, sex == "Male"), aes(ordered(decile_score))) + 
+        geom_bar() + xlab("Decile Score") +
+        ylim(0, 325) + ggtitle("Women's Decile Scores")
+      grid.arrange(pman, pwom, ncol = 2)
+    }
+    
     plot_decile_scores_violent <- function(df){
         pblack <- ggplot(data=filter(df, race =="African-American"), aes(ordered(v_decile_score))) + 
                   geom_bar() + xlab("Violent Decile Score") +
@@ -172,16 +182,18 @@ get_actual <-function(vec){
 
 # Uses ROCR
 
-y <- get_actual(df$score_text)
-predictions <- # model$fitted_values
-
-  get_predictions <- function(Model, cutoff) {
-    for (val in Model$fitted.values) {
-         if (val > cutoff) {a = c(a, 1)}
-         else {a = c(a, 0) }
-    }
-    return(a)
+get_predictions <- function(Model, cutoff) {
+  for (val in Model$fitted.values) {
+    if (val > cutoff) {a = c(a, 1)}
+    else {a = c(a, 0) }
+  }
+  return(a)
 }
+
+y <- get_actual(as.vector(df$score_text))
+predictions <- NModel$fitted_values
+
+
 pred <- prediction(predictions, y);
 
 # Recall-Precision curve             
