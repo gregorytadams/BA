@@ -18,6 +18,6 @@ do_analysis_violent <- function(){
 
 
 #print("normal \n")
-#do_analysis_normal()
+NModel = do_analysis_normal()
 #print("violent \n")
 #do_analysis_violent()

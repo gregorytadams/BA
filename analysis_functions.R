@@ -76,13 +76,13 @@ FILEPATH_VIOLENT <- "~/BA/compas-analysis/compas-scores-two-years-violent.csv"
         grid.arrange(pblack, pwhite, pother, ncol = 3)
     }
 
-    plot_decile_scores_normal <- function(df) {
-      pman <- ggplot(data=filter(df, sex =="Male"), aes(ordered(decile_score))) + 
+    plot_decile_scores_gender <- function(df) {
+      pman <- ggplot(data=filter(df, sex !="Female"), aes(ordered(decile_score))) + 
         geom_bar() + xlab("Decile Score") +
-        ylim(0, 325) + ggtitle("Male's Decile Scores")
-      pwom <- ggplot(data=filter(df, sex == "Male"), aes(ordered(decile_score))) + 
+        ylim(0, 1000) + ggtitle("Male's Decile Scores")
+      pwom <- ggplot(data=filter(df, sex == "Female"), aes(ordered(decile_score))) + 
         geom_bar() + xlab("Decile Score") +
-        ylim(0, 325) + ggtitle("Women's Decile Scores")
+        ylim(0, 1000) + ggtitle("Women's Decile Scores")
       grid.arrange(pman, pwom, ncol = 2)
     }
     
