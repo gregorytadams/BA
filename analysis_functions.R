@@ -154,9 +154,9 @@ FILEPATH_VIOLENT <- "~/BA/compas-analysis/compas-scores-two-years-violent.csv"
     return(values)
   }
   
-get_pred <- function(df){
+# get_pred <- function(df){
   
-}
+# }
   
 get_actual <-function(vec){
   actual <- c()
